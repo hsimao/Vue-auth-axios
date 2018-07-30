@@ -103,12 +103,16 @@
           terms: this.terms
         }
         console.log(formData)
-        this.$http.post('/users.json', formData)
-          .then( res => {
-            console.log(res)
-          }).catch( error => {
-            console.log(error)
-          })
+        this.$http.post('/signupNewUser?key=AIzaSyCykZy7KhMihbBxixnzXs2mKBkA1TrMv2s', {
+          email: formData.email,
+          password: formData.password,
+          returnSecureToken: true
+        })
+        .then( res => {
+          console.log(res)
+        }).catch( error => {
+          console.log(error)
+        })
       }
     }
   }
