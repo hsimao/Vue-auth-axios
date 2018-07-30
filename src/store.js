@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axiosAuth from './axios-auth'
 import axiosUser from './axios-user'
+import router from './router'
 
 Vue.use(Vuex)
 
@@ -21,6 +22,12 @@ export default new Vuex.Store({
     },
     storeUser(state, user) {
       state.user = user
+    },
+    clearAuth(state) {
+      state.idToken   = null
+      state.userId    = null
+      state.userEmail = null
+      state.user      = null
     }
   },
 
@@ -55,6 +62,10 @@ export default new Vuex.Store({
         }
       })
       .catch(error => console.log(error))
+    },
+    logout({ commit }) {
+      commit('clearAuth')
+      router.replace('/signin')
     }
   },
 
