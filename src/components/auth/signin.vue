@@ -39,6 +39,13 @@
           password: this.password,
         }
         console.log(formData)
+        this.$http.post('/verifyPassword?key=AIzaSyCykZy7KhMihbBxixnzXs2mKBkA1TrMv2s', {
+          email: formData.email,
+          password: formData.password,
+          returnSecureToken: true
+        })
+          .then( res => { console.log(res) })
+          .catch( error => { console.log(error) })
       }
     }
   }

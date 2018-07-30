@@ -108,11 +108,8 @@
           password: formData.password,
           returnSecureToken: true
         })
-        .then( res => {
-          console.log(res)
-        }).catch( error => {
-          console.log(error)
-        })
+          .then( res => { console.log(res) })
+          .catch( error => { console.log(error) })
       }
     }
   }
