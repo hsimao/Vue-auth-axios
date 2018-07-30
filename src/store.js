@@ -32,19 +32,25 @@ export default new Vuex.Store({
   },
 
   actions: {
+    // 登入計時器
+    loginTimer({ commit, dispatch }, time) {
+      setTimeout(() => {
+        dispatch('logout')
+      }, time * 1000)
+    },
     // 驗證註冊
     signup({ commit, dispatch }, authData) {
       signAPI('signupNewUser', authData, commit, dispatch)
     },
     // 驗證登入
-    login({ commit }, authData) {
-      signAPI('verifyPassword', authData, commit)
+    login({ commit, dispatch}, authData) {
+      signAPI('verifyPassword', authData, commit, dispatch)
     },
     // 驗證註冊成功後，將資料存到user資料庫
     storeUser({ commit, state }, userData) {
       if (!state.idToken) return
       axiosUser.post(`/users.json?auth=${state.idToken}`, userData)
-        .then(res => console.log(res))
+        .then(res => router.replace('/dashboard'))
         .catch(error => console.log(error))
     },
     // 驗證完後從資料庫取得匹配user資料, 重新格式化後將資料存到state
@@ -52,6 +58,7 @@ export default new Vuex.Store({
       if (!state.idToken) return
       axiosUser.get(`/users.json?auth=${state.idToken}`)
       .then(res => {
+        console.log(res.data)
         const data = res.data
         const users = []
         for (let key in data) {
@@ -92,6 +99,8 @@ function signAPI(url, data, commit, dispatch) {
         userId: res.data.localId,
         email: res.data.email
       })
+      dispatch('loginTimer', res.data.expiresIn)
+      if (url === 'verifyPassword') router.replace('/dashboard')
       if (url === 'signupNewUser') dispatch('storeUser', data)
     })
     .catch( error => { console.log(error) })
