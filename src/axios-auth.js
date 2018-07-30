@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const authAPI = axios.create({
-  // 設置axios的預設url
-  // baseURL: 'https://vue-auth-ebeac.firebaseio.com'
+  // 設置axios的預設url, 驗證用的api
   baseURL: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty'
 })
 
