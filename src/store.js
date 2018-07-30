@@ -61,6 +61,9 @@ export default new Vuex.Store({
   getters: {
     user(state) {
       return state.user
+    },
+    isLogin(state) {
+      return state.idToken !== null
     }
   }
 })

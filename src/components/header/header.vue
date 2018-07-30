@@ -5,19 +5,29 @@
     </div>
     <nav>
       <ul>
-        <li>
+        <li v-if="!isLogin">
           <router-link to="/signup">Sign Up</router-link>
         </li>
-        <li>
+        <li v-if="!isLogin">
           <router-link to="/signin">Sign In</router-link>
         </li>
-        <li>
+        <li v-if="isLogin">
           <router-link to="/dashboard">Dashboard</router-link>
         </li>
       </ul>
     </nav>
   </header>
 </template>
+
+<script>
+export default {
+  computed: {
+    isLogin() {
+      return this.$store.getters.isLogin
+    }
+  }
+}
+</script>
 
 <style scoped>
   #header {
