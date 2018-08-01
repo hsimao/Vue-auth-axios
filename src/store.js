@@ -9,7 +9,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     idToken: null,
-    userId: null,
     userEmail: null,
     user: null
   },
@@ -17,7 +16,6 @@ export default new Vuex.Store({
   mutations: {
     authUser(state, userData) {
       state.idToken   = userData.token
-      state.userId    = userData.userId
       state.userEmail = userData.email
     },
     storeUser(state, user) {
@@ -25,7 +23,6 @@ export default new Vuex.Store({
     },
     clearAuth(state) {
       state.idToken   = null
-      state.userId    = null
       state.userEmail = null
       state.user      = null
     }
@@ -72,7 +69,22 @@ export default new Vuex.Store({
     },
     logout({ commit }) {
       commit('clearAuth')
+      localStorage.removeItem('expiresDate')
+      localStorage.removeItem('token')
+      localStorage.removeItem('userEmail')
       router.replace('/signin')
+    },
+    checkLogin({ commit }) {
+      const token = localStorage.getItem('token')
+      if (!token) return
+      const expiresDate = localStorage.getItem('expiresDate')
+      const now = new Date()
+      if ( now >= expiresDate) return
+      const email = localStorage.getItem('userEmail')
+      commit('authUser', {
+        token: token,
+        email: email
+      })
     }
   },
 
@@ -86,6 +98,7 @@ export default new Vuex.Store({
   }
 })
 
+
 // signAPI 驗證方法封裝
 function signAPI(url, data, commit, dispatch) {
   axiosAuth.post(`/${url}?key=AIzaSyCykZy7KhMihbBxixnzXs2mKBkA1TrMv2s`, {
@@ -96,12 +109,19 @@ function signAPI(url, data, commit, dispatch) {
     .then( res => {
       commit('authUser', {
         token: res.data.idToken,
-        userId: res.data.localId,
         email: res.data.email
       })
+      // 將登入token跟過期時間儲存到localStorage
+      const now = new Date()
+      const expiresDate = new Date(now.getTime() + res.data.expiresIn * 1000)
+      localStorage.setItem('token', res.data.idToken)
+      localStorage.setItem('expiresDate', expiresDate)
+      localStorage.setItem('userEmail', res.data.email)
+
       dispatch('loginTimer', res.data.expiresIn)
       if (url === 'verifyPassword') router.replace('/dashboard')
       if (url === 'signupNewUser') dispatch('storeUser', data)
     })
     .catch( error => { console.log(error) })
 }
+
