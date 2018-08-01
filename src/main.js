@@ -5,8 +5,10 @@ import store from './store'
 
 import authAPI from './axios-auth'
 import VueAxios from 'vue-axios'
+import Vuelidate from 'vuelidate'
 
 Vue.use(VueAxios, authAPI)
+Vue.use(Vuelidate)
 
 new Vue({
   el: '#app',

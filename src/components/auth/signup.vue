@@ -2,19 +2,24 @@
   <div id="signup">
     <div class="signup-form">
       <form @submit.prevent="onSubmit">
-        <div class="input">
+        <div class="input" :class="{invalid: $v.email.$error}">
           <label for="email">Mail</label>
           <input
                   type="email"
                   id="email"
+                  @blur="$v.email.$touch()"
                   v-model="email">
+          <p v-if="!$v.email.email">請輸入正確的Email</p>
+          <p v-if="!$v.email.required">Email欄位不可為空</p>
         </div>
-        <div class="input">
+        <div class="input" :class="{invalid: $v.age.$error}">
           <label for="age">Your Age</label>
           <input
                   type="number"
                   id="age"
+                  @blur="$v.age.$touch()"
                   v-model.number="age">
+          <p v-if="!$v.age.minVal">年紀必須大於{{ $v.age.$params.minVal.min }}</p>
         </div>
         <div class="input">
           <label for="password">Password</label>
@@ -69,6 +74,8 @@
 </template>
 
 <script>
+  import { required, email, numeric, minValue } from 'vuelidate/lib/validators'
+
   export default {
     data () {
       return {
@@ -79,6 +86,17 @@
         country: 'usa',
         hobbyInputs: [],
         terms: false
+      }
+    },
+    validations: {
+      email: {
+        required,
+        email
+      },
+      age: {
+        required,
+        numeric,
+        minVal: minValue(18)
       }
     },
     methods: {
@@ -147,6 +165,15 @@
     outline: none;
     border: 1px solid #521751;
     background-color: #eee;
+  }
+
+  .input.invalid input {
+    border: 1px solid red;
+    background-color: #ffc9aa;
+  }
+
+  input.invalid label {
+    color: red;
   }
 
   .input select {
